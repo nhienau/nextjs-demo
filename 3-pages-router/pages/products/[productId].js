@@ -1,14 +1,36 @@
-import { getProduct } from "@/lib/data-service";
+import { getProduct, getProducts } from "@/lib/data-service";
 import Head from "next/head";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
-export async function getServerSideProps({ params }) {
+export async function getStaticPaths() {
+  const products = await getProducts();
+  const paths = products
+    .map((product) => ({
+      params: {
+        productId: String(product.id),
+      },
+    }))
+    .slice(0, 10);
+
+  return {
+    paths,
+    fallback: true,
+  };
+}
+
+export async function getStaticProps({ params }) {
   const product = await getProduct(params.productId);
   if (!product) return { notFound: true };
   return { props: { product } };
 }
 
 function Product({ product }) {
+  const router = useRouter();
+  if (router.isFallback) {
+    return <div>Loading...</div>;
+  }
+
   const {
     title,
     price,
@@ -21,7 +43,7 @@ function Product({ product }) {
   return (
     <>
       <Head>
-        <title>{title} - Fake Store</title>
+        <title>{`${title} - Fake Store`}</title>
       </Head>
 
       <div className="grid grid-cols-12 grid-rows-1 gap-6 my-6 lg:grid-rows-6">

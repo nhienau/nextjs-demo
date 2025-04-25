@@ -1,3 +1,4 @@
+import Filter from "@/components/Filter";
 import ProductList from "@/components/ProductList";
 import { getProducts } from "@/lib/data-service";
 import Head from "next/head";
@@ -20,7 +21,7 @@ function Products({ products }) {
       </Head>
       <div>
         <h1 className="font-bold text-3lg">Our products</h1>
-        {/* Filter */}
+        <Filter />
         <ProductList products={products} />
       </div>
     </>
